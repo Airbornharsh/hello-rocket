@@ -6,7 +6,7 @@ extern crate rocket;
 #[derive(Serialize, Deserialize)]
 #[serde(crate = "rocket::serde")]
 struct Message {
-    message: String,
+    message: Option<String>,
 }
 
 #[get("/")]
@@ -17,7 +17,7 @@ fn index() -> &'static str {
 #[get("/api")]
 fn get_harsh() -> Json<Message> {
     let check = Message {
-        message: "Hello Harsh".to_string(),
+        message: Some("Hello Harsh".to_string()),
     };
 
     Json(check)
@@ -26,18 +26,24 @@ fn get_harsh() -> Json<Message> {
 #[get("/api/<name>")]
 fn get_name(name: String) -> Json<Message> {
     let check = Message {
-        message: format!("Hello {}", name),
+        message: format!("Hello {}", name).into(),
     };
 
     Json(check)
 }
 
 #[get("/hello?<name>&<age>")]
-fn hello(name: Option<String>, age: Option<String>) -> String {
-    match (name, age) {
-        (Some(name), Some(age)) => format!("Hello, {} of age {}!", name, age),
-        (_, _) => "Hello!".into(),
-    }
+fn hello(name: Option<String>, age: Option<String>) -> Json<Message> {
+    let msg = match (name, age) {
+        (Some(name), Some(age)) => Message {
+            message: format!("Hello {} you are {} years old", name, age).into(),
+        },
+        (_, _) => Message {
+            message: format!("Please provide name and age").into(),
+        },
+    };
+
+    Json(msg)
 }
 
 #[launch]
