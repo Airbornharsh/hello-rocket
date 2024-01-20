@@ -32,7 +32,15 @@ fn get_name(name: String) -> Json<Message> {
     Json(check)
 }
 
+#[get("/hello?<name>&<age>")]
+fn hello(name: Option<String>, age: Option<String>) -> String {
+    match (name, age) {
+        (Some(name), Some(age)) => format!("Hello, {} of age {}!", name, age),
+        (_, _) => "Hello!".into(),
+    }
+}
+
 #[launch]
 fn rocket() -> _ {
-    rocket::build().mount("/", routes![index, get_harsh, get_name])
+    rocket::build().mount("/", routes![index, get_harsh, get_name, hello])
 }
