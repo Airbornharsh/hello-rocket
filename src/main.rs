@@ -1,5 +1,13 @@
+use rocket::serde::{json::Json, Deserialize, Serialize};
+
 #[macro_use]
 extern crate rocket;
+
+#[derive(Serialize, Deserialize)]
+#[serde(crate = "rocket::serde")]
+struct Message {
+    message: String,
+}
 
 #[get("/")]
 fn index() -> &'static str {
@@ -7,8 +15,12 @@ fn index() -> &'static str {
 }
 
 #[get("/api")]
-fn get_harsh() -> &'static str {
-    "Welcome to Rust World"
+fn get_harsh() -> Json<Message> {
+    let check = Message {
+        message: "Hello Harsh".to_string(),
+    };
+
+    Json(check)
 }
 
 #[launch]
