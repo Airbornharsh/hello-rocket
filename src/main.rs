@@ -23,7 +23,16 @@ fn get_harsh() -> Json<Message> {
     Json(check)
 }
 
+#[get("/api/<name>")]
+fn get_name(name: String) -> Json<Message> {
+    let check = Message {
+        message: format!("Hello {}", name),
+    };
+
+    Json(check)
+}
+
 #[launch]
 fn rocket() -> _ {
-    rocket::build().mount("/", routes![index, get_harsh])
+    rocket::build().mount("/", routes![index, get_harsh, get_name])
 }
